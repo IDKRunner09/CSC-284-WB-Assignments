@@ -49,7 +49,7 @@ void PrintData(vector<Student>& database) {
 	else {
 		std::cout << std::format("{:<6} {:<20} {:<5} {:<12} {:<25}\n",
 			"ID", "Name", "Age", "Major", "Email");
-		std::cout << format("---------------------------------------------------------------------\n");
+		std::cout << "---------------------------------------------------------------------\n";
 		for (Student& student : database) {
 			std::cout << student.details();
 		}
@@ -163,4 +163,5 @@ int main() {
 
 	} while(command != 6);
 	cout << "Exited the program!" << endl;
+
 }
