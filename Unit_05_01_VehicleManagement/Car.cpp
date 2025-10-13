@@ -15,5 +15,6 @@ double Car::getFuelEfficiency() const
 
 void Car::displayInfo() const {
     Vehicle::displayInfo();
-    std::cout << std::format("Type: Car | Doors: {} | Electic: {}\nFuel Efficiency: {}\n", numDoors, (isElectric ? "Yes" : "No"), getFuelEfficiency());
+    std::cout << std::format("Type: Car | Doors: {} | Electic: {}\nFuel Efficiency: {} km/l\n", numDoors, (isElectric ? "Yes" : "No"), getFuelEfficiency());
+
 }
