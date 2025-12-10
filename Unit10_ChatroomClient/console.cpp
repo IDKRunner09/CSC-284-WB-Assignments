@@ -25,9 +25,9 @@ int main() {
 	//chat window
 	chat_win = derwin(main_win, height - 10, (3 * (width / 4)) - 1, 4, 1);
 	scrollok(chat_win, true);
-	mvwprintw(chat_win, 1, 2, "Welcome to the Chat Room!\n");
-	mvwprintw(chat_win, 2, 2, "This is a placeholder message\n");
-	mvwprintw(chat_win, 3, 2, "More messages will appear here...\n");
+	mvwprintw(chat_win, 1, 1, "Welcome to the Chat Room!\n");
+	mvwprintw(chat_win, 2, 1, "This is a placeholder message\n");
+	mvwprintw(chat_win, 3, 1, "More messages will appear here...\n");
 	//subject window
 	subject_win = derwin(main_win, height - 10, (width / 4) - 3, 4, (3 * (width / 4)) + 1);
 	//input window
@@ -52,11 +52,12 @@ int main() {
 	wrefresh(main_win);
 
 	bool repeat = true;
-	int i = 1;
+	int input_length = 0;
 	//selector for subject window
 	bool selecting = false;
 	const int buffer_size = 250;
 	char ch[buffer_size];
+	memset(ch, 0, sizeof(ch));
 	int pos = 3;
 	int selector = 0;
 	noecho();
@@ -64,6 +65,7 @@ int main() {
 	keypad(input_win, true);
 	while (repeat) { //loops
 		int c = wgetch(input_win);
+
 		switch (c) {
 		case 27: {
 			repeat = false;
@@ -136,7 +138,7 @@ int main() {
 					mvwprintw(subject_win, 1 + i, 2, list[i].c_str());
 				}
 				wclear(input_win);
-				wmove(chat_win, getcury(chat_win), 2);
+				wmove(chat_win, getcury(chat_win), 1);
 				wprintw(chat_win, "USER SELECTED: %s\n", list[selector].c_str());
 				box(chat_win, 0, 0);
 				selector = 0;
@@ -152,27 +154,30 @@ int main() {
 				break;
 			}
 			else {
-				ch[i - 2] = '\0';
-				wmove(chat_win, getcury(chat_win), 2);
+				ch[input_length] = '\0';
+				wmove(chat_win, getcury(chat_win), 1);
 				wprintw(chat_win, "USER: %s\n", ch);
 				box(chat_win, 0, 0);
 				memset(ch, 0, sizeof(ch));
+				ch[input_length] = '\0';
 				werase(input_win);
 				box(input_win, 0, 0);
 				mvwprintw(input_win, 1, 1, "> ");
-				i = 2;
+				input_length = 0;
 				pos = 3;
 				wrefresh(chat_win);
 				wrefresh(input_win);
 				break;
 			}
+			
 		}
 		case 8:
 		case KEY_BACKSPACE:
 		{
 			if (pos > 3) {
 				pos--;
-				ch[i - 2] = '\0';	
+				ch[input_length] = '\0';	
+				input_length--;
 				mvwaddch(input_win, 1, pos, ' ');
 				box(input_win, 0, 0);
 				wmove(input_win, 1, pos);
@@ -182,15 +187,13 @@ int main() {
 		}
 		default: {
 			if (selecting) break;
-			if ((i - 2) >= 0 && (i - 2) < buffer_size)
-{
-    ch[i - 2] = '\0';
-}
+			
 			if (pos <= width-5 && c >= 32 && c <= 126) {
-				ch[i-2] = (char)c;
-				mvwaddch(input_win, 1, pos, c);
-				pos++;
-				i++;
+				if (input_length < buffer_size - 1) {
+					ch[input_length++] = (char)c;
+					mvwaddch(input_win, 1, pos, c);
+					pos++;
+				}
 				break;
 			}
 		}
